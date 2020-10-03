@@ -31,20 +31,20 @@ const useCheerio = html => {
 };
 
 const getArticleUrls = async () => {
-  const urls = [];
-
   try {
     const { data } = await apiInvoker.get('artikel');
     const { $, getHyperlink } = useCheerio(data);
 
-    $('.article-list-item').each((_, article) => {
-      urls.push(getHyperlink(article));
-    });
-  } catch {
-    console.error('Something wrong!');
-  }
+    const urls = $('.article-list-item')
+      .map((_, article) => {
+        return getHyperlink(article);
+      })
+      .get();
 
-  return urls;
+    return urls;
+  } catch {
+    throw Error('Something wrong!');
+  }
 };
 
 const getRelatedArticles = data => {
@@ -84,7 +84,7 @@ const fetchArticles = async urls => {
 
     return Promise.all(articles);
   } catch {
-    return console.error('Something wrong!');
+    throw Error('Something wrong!');
   }
 };
 
@@ -95,9 +95,9 @@ const scrape = async () => {
 
     const data = JSON.stringify({ articles });
     createJsonFile(data);
-  } catch {
-    console.log('Something wrong!');
+  } catch (err) {
+    console.error(err);
   }
 };
 
-scrape();
+scrape(); // Call main function
