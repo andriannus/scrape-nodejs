@@ -1,6 +1,7 @@
 {
   "arrowParens": "avoid",
   "bracketSpacing": true,
+  "endOfLine": "lf",
   "htmlWhitespaceSensitivity": "ignore",
   "printWidth": 80,
   "semi": true,
