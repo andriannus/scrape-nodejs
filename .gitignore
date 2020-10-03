@@ -5,4 +5,4 @@ node_modules
 .vscode
 
 # Output
-solution.json
+result.json
