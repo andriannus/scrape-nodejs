@@ -93,7 +93,7 @@ const scrape = async () => {
     const urls = await getArticleUrls();
     const articles = await fetchArticles(urls);
 
-    const data = JSON.stringify({ articles });
+    const data = JSON.stringify({ articles }, null, 2);
     createJsonFile(data);
   } catch (err) {
     console.error(err);
