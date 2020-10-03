@@ -9,6 +9,13 @@ const apiInvoker = axios.create({
   baseURL: BASE_URL,
 });
 
+const createJsonFile = data => {
+  fs.writeFile(FILE_NAME, data, 'utf-8', err => {
+    if (err) throw Error(err);
+    console.log('OK');
+  });
+};
+
 const useCheerio = html => {
   const $ = cheerio.load(html);
 
@@ -46,9 +53,7 @@ const getRelatedArticles = data => {
   const relatedArticles = $('.container .side-list-panel')
     .filter((_i, element) => {
       const panelHeader = getText(element, 'h4.panel-header');
-      const isRelatedArticle = panelHeader === 'Artikel Terkait';
-
-      return isRelatedArticle;
+      return panelHeader === 'Artikel Terkait';
     })
     .map((_j, element) => $(element).find('ul.panel-items-list li').get())
     .map((_k, list) => {
@@ -62,26 +67,18 @@ const getRelatedArticles = data => {
   return relatedArticles;
 };
 
-const fetchArticles = async () => {
-  const urls = await getArticleUrls();
-
+const fetchArticles = async urls => {
   try {
     const articles = urls.map(async url => {
       const { data } = await apiInvoker.get(url);
       const { getText } = useCheerio(data);
 
-      const title = getText('.container', 'h1.post-title');
-      const author = getText('.container', 'span.author-name');
-      const postingDate = getText('.container', 'span.post-date span');
-
-      const relatedArticles = getRelatedArticles(data);
-
       return {
         url,
-        title,
-        author,
-        postingDate,
-        relatedArticles,
+        title: getText('.container', 'h1.post-title'),
+        author: getText('.container', 'span.author-name'),
+        postingDate: getText('.container', 'span.post-date span'),
+        relatedArticles: getRelatedArticles(data),
       };
     });
 
@@ -93,12 +90,11 @@ const fetchArticles = async () => {
 
 const scrape = async () => {
   try {
-    const articles = await fetchArticles();
-    const body = JSON.stringify({ articles });
+    const urls = await getArticleUrls();
+    const articles = await fetchArticles(urls);
 
-    fs.writeFile(FILE_NAME, body, 'utf-8', () => {
-      console.log('OK');
-    });
+    const data = JSON.stringify({ articles });
+    createJsonFile(data);
   } catch {
     console.log('Something wrong!');
   }
