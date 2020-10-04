@@ -3,7 +3,7 @@ const cheerio = require('cheerio');
 const fs = require('fs');
 
 const BASE_URL = 'https://www.cermati.com/';
-const FILE_NAME = 'result.json';
+const FILE_NAME = 'result';
 
 const apiInvoker = axios.create({
   baseURL: BASE_URL,
@@ -12,7 +12,7 @@ const apiInvoker = axios.create({
 const createJsonFile = data => {
   const json = JSON.stringify(data, null, 2);
 
-  fs.writeFile(FILE_NAME, json, 'utf-8', err => {
+  fs.writeFile(`${FILE_NAME}.json`, json, 'utf-8', err => {
     if (err) throw Error(err);
     console.log('OK');
   });
