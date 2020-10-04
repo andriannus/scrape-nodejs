@@ -10,7 +10,9 @@ const apiInvoker = axios.create({
 });
 
 const createJsonFile = data => {
-  fs.writeFile(FILE_NAME, data, 'utf-8', err => {
+  const json = JSON.stringify(data, null, 2);
+
+  fs.writeFile(FILE_NAME, json, 'utf-8', err => {
     if (err) throw Error(err);
     console.log('OK');
   });
@@ -93,8 +95,7 @@ const scrape = async () => {
     const urls = await getArticleUrls();
     const articles = await fetchArticles(urls);
 
-    const data = JSON.stringify({ articles }, null, 2);
-    createJsonFile(data);
+    createJsonFile({ articles });
   } catch (err) {
     console.error(err);
   }
